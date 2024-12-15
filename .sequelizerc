@@ -1,0 +1,11 @@
+// .sequelizerc
+
+const path = require('path');
+
+module.exports = {
+    //changed to databse.json to config.js to be able touse env variables
+  config: path.resolve('config', 'config.js'),
+  'models-path': path.resolve('db', 'models'),
+  'seeders-path': path.resolve('db', 'seeders'),
+  'migrations-path': path.resolve('db', 'migrations'),
+};
