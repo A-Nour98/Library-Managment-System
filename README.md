@@ -1,7 +1,8 @@
 # Library Managment System
 
 - use `npm install` to install necessary dependencies
-- provide a .env file with the following variables(db username and password are the credinetials of the local machine postgres configuration 
+- provide a .env file with the following variables(db username and password are the credinetials of the local machine postgres configuration):
+-  
 	  NODE_ENV=development
 		PORT=
 		DB_USERNAME=
