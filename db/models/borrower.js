@@ -35,15 +35,6 @@ module.exports = sequelize.define('borrower',{
 },
   {freezeTableName:true,
   modelName: 'borrower',
-  paranoid: true,
-  indexes: [
-    {
-      unique: true,
-      fields: ['email'],
-    },
-    {
-      fields: ['name']
-    }
-  ]
+  paranoid: true
 });
 

@@ -35,9 +35,5 @@ module.exports = sequelize.define('book',{
   freezeTableName:true,
   modelName: 'book',
   paranoid: true,
-  indexes: [
-    { fields: ['title'] },         // For searching by title
-    { fields: ['author'] }        // For searching by author
-  ],
 });
 

@@ -1,135 +1,178 @@
-const { exist } = require('joi');
-const Borrower = require('../db/models/borrower.js');
-const statusCodes = require('../status_codes.js');
-const {createValidation, updateValidation} = require('../validations/borrowerValidation.js');
+const Borrower = require('../db/models/borrower.js'); // Import the Borrower model
+const statusCodes = require('../status_codes.js'); // Import status codes
+const { createValidation, updateValidation } = require('../validations/borrowerValidation.js'); // Import validation functions
 
-const CreateBorrower = async(req,res)=>{
-    const body = req.body;
-    try{
+// Function to create a new borrower
+const CreateBorrower = async (req, res) => {
+    const body = req.body; // Get request body
+
+    try {
+        // Perform validation on the request body
         const validation = createValidation(body);
+
         if (validation.error) {
-            return res.status(400).json({statusCode: statusCodes.borrowerCodes.borrowerValidationError,
-                message: validation.error.details[0].message}); 
-        } 
-
-        existingBorrower = await Borrower.findOne({ where: { email: body.email } });
-        if(existingBorrower)
+            // If validation fails, return 400 status with error message
             return res.status(400).json({
-                statusCode: statusCodes.borrowerCodes.borrowerEmailAlreadyExists,
-                message: "Borrower email already exists"});
+                statusCode: statusCodes.borrowerCodes.borrowerValidationError, // Validation error status code
+                message: validation.error.details[0].message // Validation error message
+            });
+        }
 
-        const newBorrower  = await Borrower.create({
+        // Check if a borrower with the same email already exists
+        existingBorrower = await Borrower.findOne({ where: { email: body.email } });
+        if (existingBorrower) {
+            // If a duplicate is found, return 400 status with error message
+            return res.status(400).json({
+                statusCode: statusCodes.borrowerCodes.borrowerEmailAlreadyExists, // Duplicate email status code
+                message: "Borrower email already exists" // Error message
+            });
+        }
+
+        // Create a new borrower record
+        const newBorrower = await Borrower.create({
             email: body.email,
             name: body.name,
-            registered_date: new Date()
-            });
-    
-            return res.status(200).json({
-                status: statusCodes.generalCodes.success,
-                CreatedBorrower: newBorrower
-            });
-    }
-    catch(err){
-        return res.status(400).json({
-            statusCode: statusCodes.generalCodes.unknown,
-            message: err.message});
-    }
-};
-const GetAllBorrowers = async(req,res)=>{
-    try
-    {
-        const borrowerList = await Borrower.findAll();
-        return res.status(200).json({
-            statusCodes: statusCodes.generalCodes.success,
-            borrowerList: borrowerList
+            registered_date: new Date() // Record the registration date
         });
-    }
-    catch(err){
+
+        // Return 200 status with the newly created borrower details
+        return res.status(200).json({
+            status: statusCodes.generalCodes.success, // Success status code
+            CreatedBorrower: newBorrower // Newly created borrower details
+        });
+    } catch (err) {
+        // Handle any errors that occur
         return res.status(400).json({
-            statusCode: statusCodes.generalCodes.unknown,
-            message: err.message});
-    }
-};
-const GetBorrower = async(req,res)=>{
-    try{
-        const borrowerInstance = await Borrower.findByPk(req.params.id);
-        if(borrowerInstance===null)
-            return res.status(404).json({
-                statusCode: statusCodes.borrowerCodes.borrowerNotFound,
-                message: "Borrower not found"
-            });
-            return res.status(200).json({
-                status: statusCodes.generalCodes.success,
-                borrower: borrowerInstance
-            });
-    }
-    catch(err){
-        return res.status(400).json({
-            statusCode: statusCodes.generalCodes.unknown,
-            message: err.message});
+            statusCode: statusCodes.generalCodes.unknown, // Unknown error status code
+            message: err.message // Error message
+        });
     }
 };
 
-const UpdateBorrower = async(req,res) =>{
-    const body = req.body;
-    //perform validation
-    
-    try{
-        
+// Function to get all borrowers
+const GetAllBorrowers = async (req, res) => {
+    try {
+        // Fetch all borrowers from the database
+        const borrowerList = await Borrower.findAll();
+        // Send response with status 200 and the list of borrowers
+        return res.status(200).json({
+            statusCode: statusCodes.generalCodes.success, // Success status code
+            borrowerList: borrowerList // List of borrowers
+        });
+    } catch (err) {
+        // Handle any errors that occur
+        return res.status(400).json({
+            statusCode: statusCodes.generalCodes.unknown, // Unknown error status code
+            message: err.message // Error message
+        });
+    }
+};
+
+// Function to get a specific borrower by ID
+const GetBorrower = async (req, res) => {
+    try {
+        // Find the borrower instance by its primary key
+        const borrowerInstance = await Borrower.findByPk(req.params.id);
+        if (borrowerInstance === null) {
+            // If no borrower found, return 404 status with error message
+            return res.status(404).json({
+                statusCode: statusCodes.borrowerCodes.borrowerNotFound, // Borrower not found status code
+                message: "Borrower not found" // Error message
+            });
+        }
+        // If borrower found, return 200 status with the borrower details
+        return res.status(200).json({
+            status: statusCodes.generalCodes.success, // Success status code
+            borrower: borrowerInstance // Borrower details
+        });
+    } catch (err) {
+        // Handle any errors that occur
+        return res.status(400).json({
+            statusCode: statusCodes.generalCodes.unknown, // Unknown error status code
+            message: err.message // Error message
+        });
+    }
+};
+
+// Function to update a borrower
+const UpdateBorrower = async (req, res) => {
+    const body = req.body; // Get request body
+
+    try {
+        // Perform validation on the request body
         const validation = updateValidation(body);
 
         if (validation.error) {
-            return res.status(400).json({statusCode: statusCodes.borrowerCodes.borrowerValidationError,
-                message: validation.error.details[0].message}); 
-        } 
-        const borrowerInstance = await Borrower.findByPk(req.params.id,
-            {
-              attributes: { exclude: ['createdAt', 'updatedAt', 'deletedAt'] }
+            // If validation fails, return 400 status with error message
+            return res.status(400).json({
+                statusCode: statusCodes.borrowerCodes.borrowerValidationError, // Validation error status code
+                message: validation.error.details[0].message // Validation error message
             });
-        if(borrowerInstance===null)
-            return res.status(404).json({
-                statusCode: statusCodes.borrowerCodes.borrowerNotFound,
-                message: "Borrower not found"
-            });
+        }
 
-        Object.assign(borrowerInstance,body);
-        await borrowerInstance.save();
-        await borrowerInstance.reload();
-        return res.status(200).json({
-            status: statusCodes.generalCodes.success,
-            updatedBorrower: borrowerInstance
+        // Find the borrower instance by its primary key
+        const borrowerInstance = await Borrower.findByPk(req.params.id, {
+            attributes: { exclude: ['createdAt', 'updatedAt', 'deletedAt'] } // Exclude metadata fields
         });
-        
-    }
-    catch(err){
+
+        if (borrowerInstance === null) {
+            // If no borrower found, return 404 status with error message
+            return res.status(404).json({
+                statusCode: statusCodes.borrowerCodes.borrowerNotFound, // Borrower not found status code
+                message: "Borrower not found" // Error message
+            });
+        }
+
+        // Update the borrower instance with new data
+        Object.assign(borrowerInstance, body);
+        await borrowerInstance.save(); // Save the updated borrower
+        await borrowerInstance.reload(); // Reload the borrower instance
+
+        // Return 200 status with the updated borrower details
+        return res.status(200).json({
+            status: statusCodes.generalCodes.success, // Success status code
+            updatedBorrower: borrowerInstance // Updated borrower details
+        });
+    } catch (err) {
+        // Handle any errors that occur
         return res.status(400).json({
-            statusCode: statusCodes.generalCodes.unknown,
-            message: err.message});
+            statusCode: statusCodes.generalCodes.unknown, // Unknown error status code
+            message: err.message // Error message
+        });
     }
 };
 
-const DeleteBorrower = async(req,res)=>{
-    try{
-        const borrowerInstance = await Borrower.findByPk(req.params.id,
-            {
-              attributes: { exclude: ['createdAt', 'updatedAt', 'deletedAt'] }
-            });
-        if(borrowerInstance===null)
-            return res.status(404).json({
-                statusCode: statusCodes.borrowerCodes.borrowerNotFound,
-                message: "Borrower not found"
-            });
-        await borrowerInstance.destroy();
-        return res.status(200).json({
-            status: statusCodes.generalCodes.success,
-            message: "Borrower deleted successfully"
+// Function to delete a borrower
+const DeleteBorrower = async (req, res) => {
+    try {
+        // Find the borrower instance by its primary key
+        const borrowerInstance = await Borrower.findByPk(req.params.id, {
+            attributes: { exclude: ['createdAt', 'updatedAt', 'deletedAt'] } // Exclude metadata fields
         });
+
+        if (borrowerInstance === null) {
+            // If no borrower found, return 404 status with error message
+            return res.status(404).json({
+                statusCode: statusCodes.borrowerCodes.borrowerNotFound, // Borrower not found status code
+                message: "Borrower not found" // Error message
+            });
         }
 
-        catch(err){
-            return res.status(400).json({
-                statusCode: statusCodes.generalCodes.unknown,
-                message: err.message});
-        }
-}
-module.exports = {GetAllBorrowers,CreateBorrower,GetBorrower,UpdateBorrower,DeleteBorrower};
+        // Delete the borrower instance
+        await borrowerInstance.destroy();
+
+        // Return 200 status indicating successful deletion
+        return res.status(200).json({
+            status: statusCodes.generalCodes.success, // Success status code
+            message: "Borrower deleted successfully" // Success message
+        });
+    } catch (err) {
+        // Handle any errors that occur
+        return res.status(400).json({
+            statusCode: statusCodes.generalCodes.unknown, // Unknown error status code
+            message: err.message // Error message
+        });
+    }
+};
+
+module.exports = { GetAllBorrowers, CreateBorrower, GetBorrower, UpdateBorrower, DeleteBorrower };

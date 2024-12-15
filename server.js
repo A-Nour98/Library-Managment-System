@@ -17,14 +17,6 @@ app.get('/', (req,res)=> {
 app.use(express.json());
 
 
-/*(async () => {
-    try {
-      await sequelize.sync({ force: true }); // Recreate tables and indexes
-      console.log('Database synced and indexes created!');
-    } catch (err) {
-      console.error('Error syncing database:', err);
-    }
-  })();*/
 app.use('/api/book',bookRouter);
 app.use('/api/borrower',borrowerRouter);
 app.use('/api/checkout',checkoutRouter);
