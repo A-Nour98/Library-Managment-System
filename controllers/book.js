@@ -1,5 +1,5 @@
 const Book = require('../db/models/book.js'); // Import the Book model
-const statusCodes = require('../status_codes.js'); // Import status codes
+const statusCodes = require('../statusCodes.js'); // Import status codes
 const { createValidation, updateValidation, searchValidation } = require('../validations/bookValidation.js'); // Import validation functions
 const Sequelize = require('sequelize'); // Import Sequelize
 const Op = Sequelize.Op; // Destructure the Op object from Sequelize
@@ -70,8 +70,8 @@ const CreateBook = async (req, res) => {
         if (duplicate !== null) {
             // If duplicate found, return 400 status with error message
             return res.status(400).json({
-                statusCode: statusCodes.bookCodes.bookAlreadyExists, // Duplicate book status code
-                existingBook: duplicate, // Existing book details
+                statusCode: statusCodes.bookCodes.bookISBNAlreadyExists, // Duplicate book status code
+                //existingBook: duplicate, // Existing book details
                 message: 'Book ISBN already exists' // Error message
             });
         }
@@ -92,7 +92,6 @@ const CreateBook = async (req, res) => {
         });
     } catch (err) {
         // Handle any errors that occur
-        console.log(err); // Log the error for debugging
         return res.status(400).json({
             statusCode: statusCodes.generalCodes.unknown, // Unknown error status code
             message: err.message // Error message

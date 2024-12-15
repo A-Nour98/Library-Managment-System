@@ -1,5 +1,5 @@
 const Borrower = require('../db/models/borrower.js'); // Import the Borrower model
-const statusCodes = require('../status_codes.js'); // Import status codes
+const statusCodes = require('../statusCodes.js'); // Import status codes
 const { createValidation, updateValidation } = require('../validations/borrowerValidation.js'); // Import validation functions
 
 // Function to create a new borrower

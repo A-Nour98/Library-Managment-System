@@ -2,8 +2,7 @@ const Book = require('../db/models/book.js'); // Import the Book model
 const Borrower = require('../db/models/borrower.js'); // Import the Borrower model
 const Checkout = require('../db/models/checkout.js'); // Import the Checkout model
 
-const statusCodes = require('../status_codes.js'); // Import status codes
-const { createValidation, updateValidation } = require('../validations/checkoutValidation.js'); // Import validation functions
+const statusCodes = require('../statusCodes.js'); // Import status codes
 const Sequelize = require('sequelize');
 const Op = Sequelize.Op; // Destructure and use Sequelize's Op for querying
 
@@ -98,7 +97,6 @@ const CreateCheckout = async (req, res) => {
             createdCheckout: newCheckout // Newly created checkout details
         });
     } catch (err) {
-        console.log(err); // Log the error
         return res.status(400).json({
             statusCode: statusCodes.generalCodes.unknown, // Unknown error status code
             message: err.message // Error message
@@ -137,7 +135,6 @@ const ReturnBook = async (req, res) => {
             message: "Book returned successfully" // Success message
         });
     } catch (err) {
-        console.log(err); // Log the error
         return res.status(400).json({
             statusCode: statusCodes.generalCodes.unknown, // Unknown error status code
             message: err.message // Error message
@@ -168,7 +165,6 @@ const GetBorrowerCheckouts = async (req, res) => {
             checkoutList: checkoutList // List of checkouts
         });
     } catch (err) {
-        console.log(err); // Log the error
         return res.status(400).json({
             statusCode: statusCodes.generalCodes.unknown, // Unknown error status code
             message: err.message // Error message
