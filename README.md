@@ -13,6 +13,6 @@ DB_NAME=
 DB_DIALECT = postgres
 ```
 - run the command: `npx sequelize-cli db:create` to create the db with the specified name
-- run the command: `npx sequelize-cli db:migrate` to use the migration files to create the tables and indexes
-- run the command `npx sequelize-cli db:seed:all` to insert a couple of book table records
+- run the command: `npx sequelize-cli db:migrate` to use the included migration files to create the tables and indexes
+- run the command `npx sequelize-cli db:seed:all` to use a book seed file to insert a couple of included book table records
 - run the command `node server.js` to run the server
