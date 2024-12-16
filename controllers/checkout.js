@@ -1,7 +1,7 @@
 const Book = require('../db/models/book.js'); // Import the Book model
 const Borrower = require('../db/models/borrower.js'); // Import the Borrower model
 const Checkout = require('../db/models/checkout.js'); // Import the Checkout model
-
+const { Parser } = require('json2csv');
 const statusCodes = require('../statusCodes.js'); // Import status codes
 const Sequelize = require('sequelize');
 const Op = Sequelize.Op; // Destructure and use Sequelize's Op for querying
@@ -195,5 +195,29 @@ const GetOverdueBooks = async (req, res) => {
         });
     }
 };
+const GetBorrowingReport = async (req, res) => {
+        try {
+            const { startDate, endDate } = req.body;
+            console.log(startDate);
+            const borrowingData = await Checkout.findAll({
+                where: {
+                    createdAt: {
+                        [Op.between]: [new Date(startDate), new Date(endDate)]
+                    }
+                }
+            });
+    
+            const fields = ['id', 'ISBN', 'borrower_id', 'due_date', 'returned', 'createdAt'];
+            const json2csvParser = new Parser({ fields });
+            const csv = json2csvParser.parse(borrowingData);
+    
+            res.header('Content-Type', 'text/csv');
+            res.attachment('borrowing_report.csv');
+            return res.send(csv);
+        } catch (err) {
+            return res.status(500).json({ statusCode: statusCodes.generalCodes.unknown, message: err.message });
+        }
+    };
 
-module.exports = { GetAllCheckouts, GetCheckout, CreateCheckout, ReturnBook, GetBorrowerCheckouts, GetOverdueBooks };
+
+module.exports = { GetAllCheckouts, GetCheckout, CreateCheckout, ReturnBook, GetBorrowerCheckouts, GetOverdueBooks, GetBorrowingReport };
